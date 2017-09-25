@@ -30,12 +30,12 @@ function stripdirs(path::AbstractString, num::Integer=1)
     return joinpath(split(normpath(path), Base.Filesystem.path_separator_re)[1+num:end]...)
 end
 
-function savebinimg(f::IOStream, im::AbstractArray)
+function savebinimg(f::IOStream, im::AbstractArray, write_header::Bool=false)
     # ?bxxyy??
     y, x = size(im)
 
-    # Only write header if picture is not exactly ICON_X,ICON_Y
-    if !(x == ICON_X && y == ICON_Y)
+    # Header currently not used by the firmware
+    if write_header
         write(f, 0x00) # Unknown, seems static. Part of header.
         write(f, UInt8(16)) # Bits per pixel? (static)
         write(f, UInt8(x & 0xff))        # x LSB
@@ -63,10 +63,10 @@ function savebinimg(f::IOStream, im::AbstractArray)
     end
 end
 
-function savebinimg(fn::AbstractString, im::AbstractArray)
+function savebinimg(fn::AbstractString, im::AbstractArray, write_header::Bool=false)
     f = open(fn, "w")
     try
-        return savebinimg(f, im)
+        return savebinimg(f, im, write_header)
     finally
         close(f)
     end
@@ -80,6 +80,7 @@ function loadbinimg(f::IOStream)
     depth::UInt16 = ICON_BITS
 
     # Not all images contain the 8-byte headers. These files are exactly 16224 bytes (16216 + 8)
+    # NOTE: Header is currently not used by the firmware at all.
     if length(data) != ICON_SIZE
         # ?bxxyy??
         header = data[1:8]

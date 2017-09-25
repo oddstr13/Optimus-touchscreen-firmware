@@ -19,14 +19,15 @@ const BITMAPS = joinpath("build", "bitmap")
 
 mkpath("assets")
 
-z = ZipFile.Writer(joinpath("assets", "release.zip"))
+const ZIPFN = joinpath("assets", "release.zip")
+z = ZipFile.Writer(ZIPFN)
 
 for (root, dirs, files) in walkdir(BITMAPS)
     for fn in files
         fp = joinpath(root, fn)
 
         zippath = joinpath("mks_pic", stripdirs(fp, 2))
-        println(fp, ": ", zippath)
+        println(fp, " -> ", ZIPFN, ":", zippath)
 
         fh = ZipFile.addfile(z, zippath)
         infile = open(fp, "r")
@@ -43,7 +44,7 @@ for (root, dirs, files) in walkdir("blobs")
         fp = joinpath(root, fn)
 
         zippath = stripdirs(fp, 1)
-        println(fp, ": ", zippath)
+        println(fp, " -> ", ZIPFN, ":", zippath)
 
         fh = ZipFile.addfile(z, zippath)
         infile = open(fp, "r")
