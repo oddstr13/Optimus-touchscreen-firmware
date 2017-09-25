@@ -19,7 +19,7 @@ const BITMAPS = joinpath("build", "bitmap")
 
 mkpath("assets")
 
-const ZIPFN = joinpath("assets", "release.zip")
+const ZIPFN = joinpath("assets", "Optimus-firmware-touchscreen.zip")
 z = ZipFile.Writer(ZIPFN)
 
 for (root, dirs, files) in walkdir(BITMAPS)
