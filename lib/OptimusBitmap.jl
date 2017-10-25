@@ -21,6 +21,11 @@ const ICON_Y = 104      # Height
 const ICON_BITS = 16    # Bits per pixel
 const ICON_SIZE = 16224 # File size
 
+const LOGO_X = 320          # Width
+const LOGO_Y = 240          # Height
+const LOGO_BITS = ICON_BITS # Bits per pixel
+const LOGO_SIZE = 153600    # Size of full-screen image file
+
 import Base.joinpath
 function joinpath()
     return ""
@@ -81,7 +86,15 @@ function loadbinimg(f::IOStream)
 
     # Not all images contain the 8-byte headers. These files are exactly 16224 bytes (16216 + 8)
     # NOTE: Header is currently not used by the firmware at all.
-    if length(data) != ICON_SIZE
+    if length(data) == ICON_SIZE
+        x = ICON_X
+        y = ICON_Y
+        depth = ICON_BITS
+    elseif length(data) == LOGO_SIZE
+        x = LOGO_X
+        y = LOGO_Y
+        depth = LOGO_BITS
+    else
         # ?bxxyy??
         header = data[1:8]
         data = data[9:end]
